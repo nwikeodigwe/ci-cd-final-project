@@ -73,6 +73,11 @@ spec:
   steps:
     - name: build
       image: quay.io/buildah/stable:v1.29
+      securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
       script: |
         #!/bin/sh
         buildah bud --no-cache -f $(params.DOCKERFILE) -t $(params.IMAGE) $(workspaces.source.path)
+
