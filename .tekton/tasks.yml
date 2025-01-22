@@ -71,18 +71,14 @@ spec:
   workspaces:
     - name: source
   steps:
-    - name: install-buildah
-      image: python:3.9-slim
-      script: |
-        #!/bin/sh
-        apt-get update && apt-get install -y buildah
     - name: build
-      image: python:3.9
+      image: python:3.9-slim
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
       script: |
         #!/bin/sh
+        apt-get update && apt-get install -y buildah
         mkdir -p /tekton/home/.docker
         export DOCKER_CONFIG=/tekton/home/.docker
         buildah bud --no-cache -f $(params.DOCKERFILE) -t $(params.IMAGE) $(workspaces.source.path)
