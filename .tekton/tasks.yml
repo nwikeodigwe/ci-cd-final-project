@@ -54,32 +54,3 @@ spec:
           python -m pip install --upgrade pip wheel
           pip install -r requirements.txt
           nosetests $(params.args)
----
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: buildah
-spec:
-  params:
-    - name: IMAGE
-      description: The name of the image to build
-      type: string
-    - name: DOCKERFILE
-      description: Path to the Dockerfile
-      type: string
-      default: ./Dockerfile
-  workspaces:
-    - name: source
-  steps:
-    - name: build
-      image: python:3.9-slim
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-      script: |
-        #!/bin/sh
-        apt-get update && apt-get install -y buildah
-        mkdir -p /tekton/home/.docker
-        export DOCKER_CONFIG=/tekton/home/.docker
-        buildah bud --no-cache -f $(params.DOCKERFILE) -t $(params.IMAGE) $(workspaces.source.path)
-
