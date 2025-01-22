@@ -77,7 +77,7 @@ spec:
         #!/bin/sh
         apt-get update && apt-get install -y buildah
     - name: build
-      image: python:3.9-slim
+      image: python:3.9
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
