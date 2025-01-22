@@ -54,3 +54,27 @@ spec:
           python -m pip install --upgrade pip wheel
           pip install -r requirements.txt
           nosetests $(params.args)
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: buildah
+spec:
+  params:
+    - name: IMAGE
+      description: The name of the image to build
+      type: string
+    - name: DOCKERFILE
+      description: Path to the Dockerfile
+      type: string
+      default: ./Dockerfile
+  workspaces:
+    - name: source
+  steps:
+    - name: build
+      image: quay.io/buildah/stable:v1.29
+      script: |
+        #!/bin/sh
+        mkdir -p /tekton/home/.docker
+        export DOCKER_CONFIG=/tekton/home/.docker
+        buildah bud --no-cache -f $(params.DOCKERFILE) -t $(params.IMAGE) $(workspaces.source.path)
